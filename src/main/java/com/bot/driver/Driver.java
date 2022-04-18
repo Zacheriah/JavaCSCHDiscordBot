@@ -1,12 +1,5 @@
 package com.bot.driver;
-/*
-Feature list:
-- Top scoring posts of the week
-- lowest scoring posts of the week
-- most controversial posts of the week
-- all of the above of the month
-- Birthday announcer
- */
+
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -15,13 +8,11 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.EnumSet;
-import java.util.Timer;
 
 /**
  * This class creates the JDA object to be used elsewhere. Right now it just calls the listener to listen for events.

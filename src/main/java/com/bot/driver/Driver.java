@@ -23,12 +23,14 @@ import java.text.ParseException;
 import java.util.EnumSet;
 import java.util.Timer;
 
+/**
+ * This class creates the JDA object to be used elsewhere. Right now it just calls the listener to listen for events.
+ * You will need to add a keystore.txt file to ./src/main/resources/keystore.txt
+ */
 public class Driver extends ListenerAdapter {
     static JDA jda;
     public static void main(String[] args) throws LoginException, ParseException {
         String token = "";
-
-
 
         Path path = Paths.get("./src/main/resources/keystore.txt");
         token = new String(Files.readAllBytes(path));

@@ -49,7 +49,8 @@ public class Listener extends ListenerAdapter {
                     String badMessageText = message.getContentRaw();
 
                     badAuthor.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("#resume-review requires you to send an image of your resume in a .png or .jpg format. " +
-                            "\n\nBecause of this, your message: \" " +badMessageText + "\" was deleted. Repost your message with a picture of your resume and we'd be happy to help!")).queue();                    message.delete().queue();
+                            "\n\nBecause of this, your message: \" " +badMessageText + "\" was deleted. Repost your message with a picture of your resume and we'd be happy to help!")).queue();
+                    message.delete().queue();
 
                 //If this message is in reply to another message at the top-level instead of in a thread.
                 }else if(message.getType().equals(MessageType.INLINE_REPLY)) {

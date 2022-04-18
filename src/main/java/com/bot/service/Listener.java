@@ -20,6 +20,7 @@ public class Listener extends ListenerAdapter {
      *       - !blind75 - links to the blind75
      *       - etc, whatever is suggested. Should be relatively easy to add to.
      *
+     * TODO: Find a way to link to the actual thread, instead of the head message of the thread when bad messages are deleted.
      * @param event - the actual message object being send
      */
     @Override
@@ -32,26 +33,59 @@ public class Listener extends ListenerAdapter {
 
         if(message.isFromType(ChannelType.TEXT)){
             //#resume-review
-            if(message.getTextChannel().getId().equals("339595755851612161")){
-                if(message.getAttachments().size() > 0 && !allowedFileFormats.contains(message.getAttachments().get(0).getFileExtension())){
+            if(channel.getId().equals("965430706274717746")){
+                //if the attachment is not one of the allowed formats
+                if(!message.getAttachments().isEmpty() && !allowedFileFormats.contains(message.getAttachments().get(0).getFileExtension())){
                     User badAuthor = message.getAuthor();
-                    badAuthor.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("#resume-review requires you to send images of your resume in a .png or .jpg format, Send us a picture of it and we'd be happy to help!")).queue();
+                    String badMessageText = message.getContentRaw();
+
+                    badAuthor.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("#resume-review requires you to send an image of your resume in a .png or .jpg format. " +
+                            "\n\nBecause of this, your message: \" " +badMessageText + "\" was deleted. Repost your message with a picture of your resume and we'd be happy to help!")).queue();
                     message.delete().queue();
 
-                }else if(message.getAttachments().size() == 0){
+                //If there are no attachments
+                }else if(message.getAttachments().isEmpty()){
                     User badAuthor = message.getAuthor();
-                    badAuthor.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("#resume-review requires you to send images of your resume in a .png or .jpg format, Send us a picture of it and we'd be happy to help!")).queue();
+                    String badMessageText = message.getContentRaw();
+
+                    badAuthor.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("#resume-review requires you to send an image of your resume in a .png or .jpg format. " +
+                            "\n\nBecause of this, your message: \" " +badMessageText + "\" was deleted. Repost your message with a picture of your resume and we'd be happy to help!")).queue();                    message.delete().queue();
+
+                //If this message is in reply to another message at the top-level instead of in a thread.
+                }else if(message.getType().equals(MessageType.INLINE_REPLY)) {
+                    User badAuthor = message.getAuthor();
+                    String badMessageText = message.getContentRaw();
+                    User goodAuthor = message.getReferencedMessage().getAuthor();
+                    Message goodMessage = message.getReferencedMessage();
+
+                    badAuthor.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("In an effort to keep clutter to a minimum in #resume-review," +
+                            " we prefer to keep all replies in threads. \n\nYour message: \"" + badMessageText +
+                            "\n\n was deleted. Feel free to repost it in " + goodAuthor.getName() + "'s thread here: " + goodMessage.getJumpUrl())).queue();
                     message.delete().queue();
 
+                //Finally, create the thread.
                 }else{
                     message.createThreadChannel(message.getAuthor().getName() + "'s Thread").queue();
                 }
             }
 
-            //TODO: add feature to check if user is replying to another person, should be possible with message.getInteractions() just haven't figured it out yet.
             //#career-questions
-            if(message.getTextChannel().getId().equals("340166684675407872")){
-                message.createThreadChannel(message.getAuthor().getName() + "'s Thread").queue();
+            if(channel.getId().equals("650907499922456600")){
+
+                //If the message is a reply to another message at the top-level instead of in a thread.
+                if(message.getType().equals(MessageType.INLINE_REPLY)){
+                    User badAuthor = message.getAuthor();
+                    String badMessageText = message.getContentRaw();
+                    User goodAuthor = message.getReferencedMessage().getAuthor();
+                    Message goodMessage = message.getReferencedMessage();
+
+                    badAuthor.openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("In an effort to keep clutter to a minimum in #career-questions," +
+                            " we prefer to keep all replies in threads. \n\nYour message: \n\n" + badMessageText +
+                            "\n\n was deleted. Feel free to repost it in " + goodAuthor.getName() + "'s thread here: " + goodMessage.getJumpUrl())).queue();
+                    message.delete().queue();
+                }else{
+                    message.createThreadChannel(message.getAuthor().getName() + "'s Thread").queue();
+                }
             }
         }
     }
@@ -67,7 +101,6 @@ public class Listener extends ListenerAdapter {
 
         //channelId = #share-your-content OR #market-research, or I could do one for each
         TextChannel channel = event.getGuild().getTextChannelById("343186849348583463");
-        String messageId = channel.getLatestMessageId();
 
         channel.getHistory().retrievePast(50).queue(messages -> {
             for(Message message: messages){
@@ -76,6 +109,5 @@ public class Listener extends ListenerAdapter {
                 }
             }
         });
-
     }
 }

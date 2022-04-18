@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,7 +21,7 @@ import java.util.EnumSet;
  */
 public class Driver extends ListenerAdapter {
     static JDA jda;
-    public static void main(String[] args) throws LoginException, ParseException {
+    public static void main(String[] args) throws LoginException, IOException {
         String token = "";
 
         Path path = Paths.get("./src/main/resources/keystore.txt");
